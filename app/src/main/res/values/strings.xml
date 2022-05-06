@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Gurtam News</string>
+    <string name="article_image">Article image</string>
+    <string name="open_origin_article">Open origin article</string>
+</resources>
