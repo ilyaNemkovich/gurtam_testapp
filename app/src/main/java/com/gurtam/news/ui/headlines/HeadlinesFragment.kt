@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.gurtam.news.databinding.FragmentHeadlinesBinding
 import com.gurtam.news.domain.entity.Headline
 import com.gurtam.news.domain.entity.Source
 import com.gurtam.news.ui.headlines.recycler.HeadlineAdapter
+import com.gurtam.news.ui.headlines.recycler.HeadlinePagingAdapter
 import com.gurtam.news.ui.util.ViewBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HeadlinesFragment :
@@ -26,10 +30,23 @@ class HeadlinesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val headlineAdapter = HeadlineAdapter { openArticleFragment(it) }
-        binding.rvSources.adapter = headlineAdapter
-        viewModel.headlines.observe(viewLifecycleOwner) {
-            headlineAdapter.submitList(it)
+
+        if (viewModel.isPagingEnabled) {
+            val headlineAdapter = HeadlinePagingAdapter { openArticleFragment(it) }.apply {
+                binding.rvSources.adapter = this
+            }
+            lifecycleScope.launch {
+                viewModel.headlinesFlow?.collectLatest { pagingData ->
+                    headlineAdapter.submitData(pagingData)
+                }
+            }
+        } else {
+            val headlineAdapter = HeadlineAdapter { openArticleFragment(it) }.apply {
+                binding.rvSources.adapter = this
+            }
+            viewModel.headlines.observe(viewLifecycleOwner) {
+                headlineAdapter.submitList(it)
+            }
         }
     }
 

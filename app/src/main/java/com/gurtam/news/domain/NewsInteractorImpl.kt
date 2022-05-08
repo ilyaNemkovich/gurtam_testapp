@@ -1,5 +1,6 @@
 package com.gurtam.news.domain
 
+import androidx.paging.PagingSource
 import com.gurtam.news.data.repository.NewsRepository
 import com.gurtam.news.domain.entity.Headline
 import com.gurtam.news.domain.entity.Source
@@ -15,5 +16,9 @@ class NewsInteractorImpl @Inject constructor(
 
     override suspend fun getHeadlines(source: Source): List<Headline> {
         return newsRepository.getHeadlines(source)
+    }
+
+    override fun getHeadlinesDataSource(source: Source): PagingSource<Int, Headline> {
+        return newsRepository.getHeadlinesDataSource(source)
     }
 }

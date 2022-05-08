@@ -20,7 +20,11 @@ class SourcesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _source.value = newsInteractor.getSources()
+            try {
+                _source.value = newsInteractor.getSources()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

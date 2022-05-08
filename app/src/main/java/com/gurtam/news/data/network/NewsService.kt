@@ -13,6 +13,10 @@ interface NewsService {
     @GET("top-headlines")
     suspend fun getHeadlines(
         @Query("sources")
-        sources: String
+        sources: String,
+        @Query("page")
+        page: Int,
+        @Query("pageSize")
+        pageSize: Int = 4
     ): HeadlinesResponse
 }
